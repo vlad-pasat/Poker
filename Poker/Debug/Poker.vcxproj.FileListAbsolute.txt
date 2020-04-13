@@ -1,0 +1,2 @@
+C:\Users\Vlad\source\repos\Poker\Debug\Poker.exe
+C:\Users\Vlad\source\repos\Poker\Debug\Poker.pdb
