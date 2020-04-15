@@ -1,4 +1,4 @@
 ﻿  Source.c
-C:\Users\Vlad\source\repos\Poker\Source.c(46,23): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Vlad\source\repos\Poker\Source.c(411): warning C4716: 'three_of_a_kind': must return a value
+C:\Users\Vlad\source\repos\Poker\Source.c(56,23): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(467): warning C4716: 'three_of_a_kind': must return a value
   Poker.vcxproj -> C:\Users\Vlad\source\repos\Poker\Debug\Poker.exe

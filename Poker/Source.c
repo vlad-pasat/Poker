@@ -14,8 +14,8 @@ Avem N jucatori, pentru fiecare jucator, vom genera 2 carti, deci N seturi de ca
 #include "Jucator.h"
 
 JUCATOR jucator[11],jucator_ordonat[20];
-CARTE community_cards[4];
-int x,n;
+CARTE community_cards[4],dead_cards[11];
+int x,y,n,nr_dead_cards;
 
 int nr_cartiinimaneagra[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int nr_cartiinimarosie[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
@@ -24,26 +24,81 @@ int nr_cartiromb[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 
 int main()
 {
+
     printf("Cati jucatori sunt la masa? ");
     scanf("%d", &n);
-    while (n <= 0 || n >= 11){
+    while (n <= 0 || n >= 11) {
         printf("Sunt maxim 10 jucatori la masa. De asemnea nu pot sa fie jucatori cu minus.\nCati jucatori sunt la masa? ");
         scanf("%d", &n);
-    } 
+    }
+
+    printf("Cate dead cards sunt la masa? ");
+    scanf("%d", &nr_dead_cards);
+    while (nr_dead_cards <= 0 || nr_dead_cards >= 11)
+    {
+        printf("\nDead cards apartine [1,10].\nDati un numar intre 1 si 10: ");
+        scanf("%d", &nr_dead_cards);
+    }
+
     generare_carti_jucator();
     determinare_high_card();
     generare_carti_ordonate();
     afisare_carti();
-    afisare_ordonata();
+    //afisare_ordonata();
  
     return 0;
 }
 
 
+
 void generare_carti_jucator()
 {
-    //Folosim aceasta metoda pentru  a ne asigura ca nu exista 2 carti identice, adica sa nu aiba un jucator in mana ceva de genul 14 ROMB 14 ROMB, sau 14 ROMB in mana si 14 ROMB in community cards.
     srand((time(NULL)));
+    //Mai intai generam dead cards [1,10].
+    for (int i = 0; i < nr_dead_cards; i++)
+    {
+        x = rand() % 4;
+        if (x == 0) strcpy(dead_cards[i].culoare, "INIMAROSIE");
+        if (x == 1) strcpy(dead_cards[i].culoare, "ROMB");
+        if (x == 2) strcpy(dead_cards[i].culoare, "INIMANEAGRA");
+        if (x == 3) strcpy(dead_cards[i].culoare, "TREFLA");
+
+        if (strcmp(dead_cards[i].culoare, "INIMAROSIE") == 0)
+        {
+            do {
+                x = rand() % 15;
+            } while (x == 0 || x == 11 || nr_cartiinimarosie[x] == -1);
+            dead_cards[i].numar = nr_cartiinimarosie[x];
+            nr_cartiinimarosie[x] = -1;
+        }
+        if (strcmp(dead_cards[i].culoare, "INIMANEAGRA") == 0)
+        {
+            do {
+                x = rand() % 15;
+            } while (x == 0 || x == 11 || nr_cartiinimaneagra[x] == -1);
+            dead_cards[i].numar = nr_cartiinimaneagra[x];
+            nr_cartiinimaneagra[x] = -1;
+        }
+        if (strcmp(dead_cards[i].culoare, "ROMB") == 0)
+        {
+            do {
+                x = rand() % 15;
+            } while (x == 0 || x == 11 || nr_cartiromb[x] == -1);
+            dead_cards[i].numar = nr_cartiromb[x];
+            nr_cartiromb[x] = -1;
+        }
+        if (strcmp(dead_cards[i].culoare, "TREFLA") == 0)
+        {
+            do {
+                x = rand() % 15;
+            } while (x == 0 || x == 11 || nr_cartitrefla[x] == -1);
+            dead_cards[i].numar = nr_cartitrefla[x];
+            nr_cartitrefla[x] = -1;
+        }
+
+    }
+    //Folosim aceasta metoda pentru  a ne asigura ca nu exista 2 carti identice, adica sa nu aiba un jucator in mana ceva de genul 14 ROMB 14 ROMB, sau 14 ROMB in mana si 14 ROMB in community cards.
+
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -145,7 +200,8 @@ void generare_carti_jucator()
     }
 }
 
-void generare_carti_ordonate()
+
+void generare_carti_ordonate() 
 {
 
     int aux;
@@ -462,26 +518,38 @@ void afisare_carti()
         else printf("%d ", community_cards[i].numar);
         printf("%s\n", community_cards[i].culoare);
     }
-}
 
-void afisare_ordonata()
-{
-    printf("\n-------------AFISARE ORDONATA---------------------");
-    for (int i = 0; i < n; i++)
+    printf("\nDead cards sunt: \n\n");
     {
-        printf("\nJucatorul %d are cartile: \n\n", i + 1);
-        for (int j = 0; j < 5; j++)
+        for (int i = 0; i < nr_dead_cards; i++)
         {
-            if (jucator_ordonat[i].carte[j].numar == AS)
+            if (dead_cards[i].numar == 1)
                 printf("AS ");
-            else printf("%d ", jucator_ordonat[i].carte[j].numar);
-            printf("%s\n", jucator_ordonat[i].carte[j].culoare);
+            else printf("%d ", dead_cards[i].numar);
+            printf("%s   ", dead_cards[i].culoare);
         }
     }
-    //printf("\nCommunity cards sunt: \n\n");
-    //for (int i = 0; i < 3; i++)
-    //{
-    //    printf("%d ", community_cards[i].numar);
-    //    printf("%s\n", community_cards[i].culoare);
-    //}
- }
+    printf("\n\n\n\n\n");
+}
+
+//void afisare_ordonata()
+//{
+//    printf("\n-------------AFISARE ORDONATA---------------------");
+//    for (int i = 0; i < n; i++)
+//    {
+//        printf("\nJucatorul %d are cartile: \n\n", i + 1);
+//        for (int j = 0; j < 5; j++)
+//        {
+//            if (jucator_ordonat[i].carte[j].numar == AS)
+//                printf("AS ");
+//            else printf("%d ", jucator_ordonat[i].carte[j].numar);
+//            printf("%s\n", jucator_ordonat[i].carte[j].culoare);
+//        }
+//    }
+//    //printf("\nCommunity cards sunt: \n\n");
+//    //for (int i = 0; i < 3; i++)
+//    //{
+//    //    printf("%d ", community_cards[i].numar);
+//    //    printf("%s\n", community_cards[i].culoare);
+//    //}
+// }
