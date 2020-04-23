@@ -17,6 +17,8 @@ JUCATOR jucator[11],jucator_ordonat[20];
 CARTE community_cards[4],dead_cards[11];
 int x,y,n,nr_dead_cards;
 
+//Acesta este pachetul de carti. 13 carti in fiecare pachet (nu il includem pe 11). 13*4=52
+//Cartile cu -1 sunt cartile care nu sunt posibile/sunt luate deja de jucator/community cards/dead cards.
 int nr_cartiinimaneagra[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int nr_cartiinimarosie[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int nr_cartitrefla[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
@@ -25,14 +27,14 @@ int nr_cartiromb[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int main()
 {
 
-    printf("Cati jucatori sunt la masa? ");
+    printf("\nCati jucatori sunt la masa? (maxim 10) ");
     scanf("%d", &n);
     while (n <= 0 || n >= 11) {
         printf("Sunt maxim 10 jucatori la masa. De asemnea nu pot sa fie jucatori cu minus.\nCati jucatori sunt la masa? ");
         scanf("%d", &n);
     }
 
-    printf("Cate dead cards sunt la masa? ");
+    printf("\nCate dead cards sunt la masa? (maxim 10) ");
     scanf("%d", &nr_dead_cards);
     while (nr_dead_cards <= 0 || nr_dead_cards >= 11)
     {
@@ -54,7 +56,9 @@ int main()
 void generare_carti_jucator()
 {
     srand((time(NULL)));
-    //Mai intai generam dead cards [1,10].
+
+    //START - GENERAREA DEAD CARDS.
+    //DEAD CARDS = Carti care nu vor fi date nici jucatorului, nici la community cards.
     for (int i = 0; i < nr_dead_cards; i++)
     {
         x = rand() % 4;
@@ -95,10 +99,13 @@ void generare_carti_jucator()
             dead_cards[i].numar = nr_cartitrefla[x];
             nr_cartitrefla[x] = -1;
         }
-
     }
+    //END - GENERAREA DEAD CARDS.
+
     //Folosim aceasta metoda pentru  a ne asigura ca nu exista 2 carti identice, adica sa nu aiba un jucator in mana ceva de genul 14 ROMB 14 ROMB, sau 14 ROMB in mana si 14 ROMB in community cards.
 
+    //START - GENERAREA CELOR 2 CARTI UNICE DIN MANA FIECARUI JUCATOR.
+    //Fiecare jucator are cate 2 carti generate aleatoriu in mana sa.
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < 2; j++)
@@ -142,9 +149,11 @@ void generare_carti_jucator()
                 nr_cartitrefla[x] = -1;
             }
         }
-    }
+    }    
+    //END - GENERAREA CELOR 2 CARTI UNICE DIN MANA FIECARUI JUCATOR.
 
-    //Aici generam 3 community cards. Folosin aceeasi metoda ca mai sus (cea a generari in seturilor de 2 carti).
+    //START - GENERAREA COMMUNITY CARDS.
+    //COMMUNITY CARDS = 3 carti puse cu fata in sus pe masa, pe care jucatorii le pot folosi pentru a face pereche, chinta, culoare, doua perechi etc...
     for (int i = 0; i < 3; i++)
     {
         x = rand() % 4;
@@ -187,7 +196,9 @@ void generare_carti_jucator()
         }
  
     }
-    //Aici adaugam fiecarui jucator in mana cele 3 community cards. Stiu, cam ciobaneste facuta.
+    //END - GENERAREA COMMUNITY CARDS.
+
+    //Aici adaugam fiecarui jucator in mana cele 3 community cards pentru simplitate la chinta. Stiu, cam ciobaneste facuta.
     //Daca stai sa te gandesti, asta e un fel de Frankenstein dintre Texas Hold'em si pokerul cu 5 carti jucat de pensionari (cel cu 5 carti in mana avea doar cartile de la 7 in sus).
     for (int i = 0; i < n; i++)
     {
@@ -200,215 +211,39 @@ void generare_carti_jucator()
     }
 }
 
-
-void generare_carti_ordonate() 
+void generare_carti_ordonate()
 {
+    //Aici ordonam cartile crescator pentru a ne ajuta la chinta.
 
     int aux;
     char caux[100];
 
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < 5; j++)
+        {
+            jucator_ordonat[i].carte[j].numar = jucator[i].carte[j].numar;
+            strcpy(jucator_ordonat[i].carte[j].culoare, jucator[i].carte[j].culoare);
+        }
 
-    //ordonam cartile crescator.
     for (int i = 0; i < n; i++)
     {
-        if (jucator[i].carte[0].numar != 1 && jucator[i].carte[1].numar != 1)
+        for (int j = 0; j < 4; j++)
         {
-            if (jucator[i].carte[0].numar > jucator[i].carte[1].numar)
+            for (int k = j + 1; k < 5; k++)
             {
-                //5 3
-                jucator_ordonat[i].carte[0].numar = jucator[i].carte[1].numar;
-                strcpy(jucator_ordonat[i].carte[0].culoare, jucator[i].carte[1].culoare);
-                jucator_ordonat[i].carte[1].numar = jucator[i].carte[0].numar;
-                strcpy(jucator_ordonat[i].carte[1].culoare, jucator[i].carte[0].culoare);
-            }
-            else {
-                //3 5
-                jucator_ordonat[i].carte[0].numar = jucator[i].carte[0].numar;
-                strcpy(jucator_ordonat[i].carte[0].culoare, jucator[i].carte[0].culoare);
-                jucator_ordonat[i].carte[1].numar = jucator[i].carte[1].numar;
-                strcpy(jucator_ordonat[i].carte[1].culoare, jucator[i].carte[1].culoare);
-            }
-        }
-        //---------PRIMELE 2 CARTI DIN MANA JUCATORULUI---------
-        if (jucator[i].carte[0].numar == AS)
-        {
-            jucator_ordonat[i].carte[1].numar = jucator[i].carte[0].numar;
-            strcpy(jucator_ordonat[i].carte[1].culoare, jucator[i].carte[0].culoare);
-            jucator_ordonat[i].carte[0].numar = jucator[i].carte[1].numar;
-            strcpy(jucator_ordonat[i].carte[0].culoare, jucator[i].carte[1].culoare);
-        }
-        if (jucator[i].carte[1].numar == AS)
-        {
-            jucator_ordonat[i].carte[1].numar = jucator[i].carte[1].numar;
-            strcpy(jucator_ordonat[i].carte[1].culoare, jucator[i].carte[1].culoare);
-            jucator_ordonat[i].carte[0].numar = jucator[i].carte[0].numar;
-            strcpy(jucator_ordonat[i].carte[0].culoare, jucator[i].carte[0].culoare);
-        }
-
-        //---------PRIMELE 2 CARTI DIN MANA JUCATORULUI--------
-
-        //---------ULTIMELE 3 CARTI (COMMUNITY CARDS) DIN MANA JUCATORULUI--------
-        if (jucator[i].carte[2].numar != 1 && jucator[i].carte[3].numar != 1 && jucator[i].carte[4].numar != 1)
-        {
-            if (jucator[i].carte[2].numar == 1 && jucator[i].carte[3].numar == 1 && jucator[i].carte[4].numar == 1)
-            {
-                //cazul in care avem 3 asi la community cards.
-                //AS AS AS
-                jucator_ordonat[i].carte[4].numar = jucator[i].carte[4].numar;
-                strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[4].culoare);
-                jucator_ordonat[i].carte[3].numar = jucator[i].carte[3].numar;
-                strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[3].culoare);
-                jucator_ordonat[i].carte[2].numar = jucator[i].carte[2].numar;
-                strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[2].culoare);
-            }
-            else
-            {
-                if (jucator[i].carte[2].numar == 1 && jucator[i].carte[3].numar == 1)
+                if (jucator_ordonat[i].carte[j].numar > jucator_ordonat[i].carte[k].numar)
                 {
-                    //cazurile in care avem doi asi in community cards.
-                    //AS AS 5
-                    jucator_ordonat[i].carte[4].numar = jucator[i].carte[2].numar;
-                    strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[2].culoare);
+                    aux = jucator_ordonat[i].carte[j].numar;
+                    jucator_ordonat[i].carte[j].numar = jucator_ordonat[i].carte[k].numar;
+                    jucator_ordonat[i].carte[k].numar = aux;
 
-                    jucator_ordonat[i].carte[3].numar = jucator[i].carte[3].numar;
-                    strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[3].culoare);
-
-                    jucator_ordonat[i].carte[2].numar = jucator[i].carte[4].numar;
-                    strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[4].culoare);
-                }
-                else if (jucator[i].carte[2].numar == 1 && jucator[i].carte[4].numar == 1)
-                {
-                    //AS 5 AS
-                    jucator_ordonat[i].carte[4].numar = jucator[i].carte[4].numar;
-                    strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[4].culoare);
-
-                    jucator_ordonat[i].carte[3].numar = jucator[i].carte[2].numar;
-                    strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[2].culoare);
-
-                    jucator_ordonat[i].carte[2].numar = jucator[i].carte[3].numar;
-                    strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[3].culoare);
-                }
-                else if (jucator[i].carte[3].numar == 1 && jucator[i].carte[4].numar == 1)
-                {
-                    //5 AS AS
-                    jucator_ordonat[i].carte[4].numar = jucator[i].carte[4].numar;
-                    strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[4].culoare);
-
-                    jucator_ordonat[i].carte[3].numar = jucator[i].carte[3].numar;
-                    strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[3].culoare);
-
-                    jucator_ordonat[i].carte[2].numar = jucator[i].carte[2].numar;
-                    strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[2].culoare);
-                }
-                else
-                {
-                    //CAZURI CU UN AS
-                    if (jucator[i].carte[2].numar == 1)
-                    {
-                        //cazul unde primul community card este as. 
-                        //Exemplu: AS 5 3
-                        jucator_ordonat[i].carte[4].numar = jucator[i].carte[2].numar;
-                        strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[2].culoare);
-                        if (jucator[i].carte[3].numar > jucator[i].carte[4].numar)
-                        {
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[3].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[3].culoare);
-
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[4].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[4].culoare);
-                        }
-                        else {
-                            //AS 3 5
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[4].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[4].culoare);
-
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[3].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[3].culoare);
-                        }
-                    }
-                    if (jucator[i].carte[3].numar == 1)
-                    {
-                        //cazul unde al doilea community card este as
-                        //5 AS 3
-                        jucator_ordonat[i].carte[4].numar = jucator[i].carte[3].numar;
-                        strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[3].culoare);
-                        if (jucator[i].carte[2].numar > jucator[i].carte[4].numar)
-                        {
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[2].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[2].culoare);
-
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[4].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[4].culoare);
-                        }
-                        else {
-                            //3 AS 5
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[2].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[2].culoare);
-
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[4].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[4].culoare);
-                        }
-                    }
-                    if (jucator[i].carte[4].numar == 1)
-                    {
-                        jucator_ordonat[i].carte[4].numar = jucator[i].carte[4].numar;
-                        strcpy(jucator_ordonat[i].carte[4].culoare, jucator[i].carte[4].culoare);
-                        if (jucator[i].carte[2].numar > jucator[i].carte[3].numar)
-                        {
-                            //5 3 AS
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[3].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[3].culoare);
-
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[2].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[2].culoare);
-                        }
-                        else
-                        {
-                            //3 5 AS
-                            jucator_ordonat[i].carte[2].numar = jucator[i].carte[2].numar;
-                            strcpy(jucator_ordonat[i].carte[2].culoare, jucator[i].carte[2].culoare);
-
-                            jucator_ordonat[i].carte[3].numar = jucator[i].carte[3].numar;
-                            strcpy(jucator_ordonat[i].carte[3].culoare, jucator[i].carte[3].culoare);
-                        }
-                    }
+                    strcpy(caux, jucator_ordonat[i].carte[j].culoare);
+                    strcpy(jucator_ordonat[i].carte[j].culoare, jucator_ordonat[i].carte[k].culoare);
+                    strcpy(jucator_ordonat[i].carte[k].culoare, caux);
                 }
             }
         }
-        //---------ULTIMELE 3 CARTI (COMMUNITY CARDS) DIN MANA JUCATORULUI--------
-
-       
-
-        //Copiem community cards din mana jucatorului in mana jucatorului ordonat pentru sortare.
-        //DACA NU SUNT ASI IN COMMUNITY CARDS
-        if (jucator[i].carte[2].numar != 1 && jucator[i].carte[3].numar != 1 && jucator[i].carte[4].numar != 1)
-        {
-            for (int j = 2; j < 5; j++)
-            {
-                jucator_ordonat[i].carte[j].numar = jucator[i].carte[j].numar;
-                strcpy(jucator_ordonat[i].carte[j].culoare, jucator[i].carte[j].culoare);
-            }
-
-            for (int j = 2; j < 4; j++)
-            {
-                for (int k = j + 1; k < 5; k++)
-                {
-                    if (jucator_ordonat[i].carte[j].numar > jucator_ordonat[i].carte[k].numar)
-                    {
-                        aux = jucator_ordonat[i].carte[j].numar;
-                        jucator_ordonat[i].carte[j].numar = jucator_ordonat[i].carte[k].numar;
-                        jucator_ordonat[i].carte[k].numar = aux;
-
-                        strcpy(caux, jucator_ordonat[i].carte[j].culoare);
-                        strcpy(jucator_ordonat[i].carte[j].culoare, jucator_ordonat[i].carte[k].culoare);
-                        strcpy(jucator_ordonat[i].carte[k].culoare, caux);
-                    }
-                }
-            }
-        }
-        //------DACA NU EXISTA ASI------
     }
-    //---------COMMUNITY CARDS---------
 }
 
 void determinare_high_card()
@@ -436,35 +271,69 @@ void determinare_high_card()
 
 }
 
-int four_of_a_kind(int i)
+bool four_of_a_kind(int i)
 {
     //vedem daca cartea 0 este egala cu cartea 1 este egala cu 2 este egala cu 3.
     if (jucator_ordonat[i].carte[0].numar == jucator_ordonat[i].carte[1].numar && jucator_ordonat[i].carte[1].numar == jucator_ordonat[i].carte[2].numar && jucator_ordonat[i].carte[2].numar == jucator_ordonat[i].carte[3].numar)
-        return 1;
+        return true;
     if (jucator_ordonat[i].carte[1].numar == jucator_ordonat[i].carte[2].numar && jucator_ordonat[i].carte[2].numar == jucator_ordonat[i].carte[3].numar && jucator_ordonat[i].carte[3].numar == jucator_ordonat[i].carte[4].numar)
-        return 1;
-    return 0;
+        return true;
+    return false;
 }
 
-int culoare(int i)
+bool culoare_functie(int i)
 {
-    //vedem daca 5 carti au aceeasi forma.
+    //vedem daca 5 carti au aceeasi culoare.
     if ((strcmp(jucator[i].carte[0].culoare, jucator[i].carte[1].culoare) == 0) && (strcmp(jucator[i].carte[1].culoare, jucator[i].carte[2].culoare) == 0) && (strcmp(jucator[i].carte[2].culoare, jucator[i].carte[3].culoare) == 0) && (strcmp(jucator[i].carte[3].culoare, jucator[i].carte[4].culoare) == 0))
-        return 1;
-    return 0;
+        return true;
+    return false;
 }
 
-int chinta(int i)
+bool chinta_functie(int i)
 {
     //vedem daca exista 5 carti consecutive in mana jucatorului.
     if (jucator[i].carte[0].numar+1 == jucator[i].carte[1].numar /**/&& jucator[i].carte[1].numar+1 == jucator[i].carte[2].numar /**/ && jucator[i].carte[2].numar+1 == jucator[i].carte[3].numar && jucator[i].carte[3].numar+1 == jucator[i].carte[4].numar)
-        return 1;
-    return 0;
+        return true;
+    return false;
 }
 
-int three_of_a_kind(int i)
+bool three_of_a_kind_functie(int i)
 {
+    if (jucator_ordonat[i].carte[0].numar == jucator_ordonat[i].carte[1].numar && jucator_ordonat[i].carte[1].numar == jucator_ordonat[i].carte[2].numar)
+        return true;
+    if (jucator_ordonat[i].carte[1].numar == jucator_ordonat[i].carte[2].numar && jucator_ordonat[i].carte[2].numar == jucator_ordonat[i].carte[3].numar)
+        return true;
+    if (jucator_ordonat[i].carte[2].numar == jucator_ordonat[i].carte[3].numar && jucator_ordonat[i].carte[3].numar == jucator_ordonat[i].carte[4].numar)
+        return true;
+    return false;
 }
+
+bool two_pair(int i)
+{
+    bool pair[2] = { false,false };
+    for (int j = 0; j < 2; j++)
+        for (int k = 2; k < 5; k++)
+            if (jucator[i].carte[j].numar == jucator[i].carte[k].numar)
+            {
+                pair[j] = true;
+                break;
+            }
+    if (pair[0] == true && pair[1] == true)
+        return true;
+    return false;
+}
+
+bool pair(int i)
+{
+    for (int j = 0; j < 4; j++)
+        for (int k = j+1; k < 5; k++)
+            if (jucator[i].carte[j].numar == jucator[i].carte[k].numar)
+                return true;
+    return false;
+    //3 2 J 9 J
+}
+
+
 
 void mana()
 {
@@ -473,7 +342,7 @@ void mana()
 
     1. Highcard - Cartea cu numarul cel mai mare din mana.
     2. Pair - Numar identic cu cartile din mana/community cards.
-    3. Two pair - 2 carti cu nr identic din mana, 2 carti comunitare cu nr identic.
+    3. Two pair - Exemplu: J 5 J 7 5 
     4. Three of a kind - Trei carti cu acelasi numar.
     5. Chinta - 5 carti consecutive.
     6. Culoare - 5 carti de aceeasi culoare (si figura). Exemplu: "ROMB" "ROMB" ROMB" ROMB" ROMB". NU MERGE "ROMB" "INIMAROSIE" "ROMB" "ROMB" "ROMB", CHIAR DACA SUNT DE ACEEASI CULOARE.
@@ -509,7 +378,13 @@ void afisare_carti()
             else printf("%d ", jucator[i].carte[j].numar);
             printf("%s\n", jucator[i].carte[j].culoare);
         }
+        //printf("\nHigh cardul jucatorului %d este: ", i + 1);
+        //if (jucator[i].highcard == AS)
+        //    printf("AS\n");
+        //else
+        //    printf("%d\n", jucator[i].highcard);
     }
+
     printf("\nCommunity cards sunt: \n\n");
     for (int i = 0; i < 3; i++)
     {
@@ -529,27 +404,21 @@ void afisare_carti()
             printf("%s   ", dead_cards[i].culoare);
         }
     }
-    printf("\n\n\n\n\n");
+    printf("\n\n\n\n\n\n\n\n");
 }
 
-//void afisare_ordonata()
-//{
-//    printf("\n-------------AFISARE ORDONATA---------------------");
-//    for (int i = 0; i < n; i++)
-//    {
-//        printf("\nJucatorul %d are cartile: \n\n", i + 1);
-//        for (int j = 0; j < 5; j++)
-//        {
-//            if (jucator_ordonat[i].carte[j].numar == AS)
-//                printf("AS ");
-//            else printf("%d ", jucator_ordonat[i].carte[j].numar);
-//            printf("%s\n", jucator_ordonat[i].carte[j].culoare);
-//        }
-//    }
-//    //printf("\nCommunity cards sunt: \n\n");
-//    //for (int i = 0; i < 3; i++)
-//    //{
-//    //    printf("%d ", community_cards[i].numar);
-//    //    printf("%s\n", community_cards[i].culoare);
-//    //}
-// }
+void afisare_ordonata()
+{
+    printf("\n-------------AFISARE ORDONATA---------------------");
+    for (int i = 0; i < n; i++)
+    {
+        printf("\nJucatorul %d are cartile: \n\n", i + 1);
+        for (int j = 0; j < 5; j++)
+        {
+            if (jucator_ordonat[i].carte[j].numar == AS)
+                printf("AS ");
+            else printf("%d ", jucator_ordonat[i].carte[j].numar);
+            printf("%s\n", jucator_ordonat[i].carte[j].culoare);
+        }
+    }
+ }
