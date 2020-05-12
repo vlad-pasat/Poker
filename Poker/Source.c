@@ -24,6 +24,7 @@ int nr_cartiinimarosie[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int nr_cartitrefla[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 int nr_cartiromb[1000] = {-1,1,2,3,4,5,6,7,8,9,10,-1,12,13,14};
 
+
 int main()
 {
 
@@ -46,6 +47,8 @@ int main()
     determinare_high_card();
     generare_carti_ordonate();
     afisare_carti();
+    mana();
+    //determinare_sansa();
     //afisare_ordonata();
  
     return 0;
@@ -297,7 +300,7 @@ bool chinta_functie(int i)
     return false;
 }
 
-bool three_of_a_kind_functie(int i)
+bool three_of_a_kind(int i)
 {
     if (jucator_ordonat[i].carte[0].numar == jucator_ordonat[i].carte[1].numar && jucator_ordonat[i].carte[1].numar == jucator_ordonat[i].carte[2].numar)
         return true;
@@ -318,7 +321,7 @@ bool two_pair(int i)
                 pair[j] = true;
                 break;
             }
-    if (pair[0] == true && pair[1] == true)
+    if (pair[0] == true && pair[1] == true) 
         return true;
     return false;
 }
@@ -361,9 +364,80 @@ void mana()
 */
     for (int i = 0; i < n; i++)
     {
-        
+        if (four_of_a_kind(i) == true)
+        {
+            jucator[i].valoarea_mainii = 7;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n - 1);
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu  four of a kind!", i + 1, jucator[i].sansa, '%');
+        }
+        else if (culoare_functie(i) == true)
+        {
+            jucator[i].valoarea_mainii = 6;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n - 1);
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu culoare!", i + 1, jucator[i].sansa, '%');
+        }
+        else if (chinta_functie(i) == true)
+        {
+            jucator[i].valoarea_mainii = 5;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n - 1);
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu chinta!", i + 1, jucator[i].sansa, '%');
+        }
+        else if (three_of_a_kind(i) == true)
+        {
+            jucator[i].valoarea_mainii = 4;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n-1);
+           // jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu three of a kind!", i + 1, jucator[i].sansa, '%');
+        }
+        else if (two_pair(i) == true)
+        {
+            jucator[i].valoarea_mainii = 3; 
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n-1) ;
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu doua perechi!", i + 1, jucator[i].sansa, '%');
+        }
+        else if (pair(i) == true)
+        {
+            jucator[i].valoarea_mainii = 2;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n-1) ;
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu pereche!", i + 1, jucator[i].sansa, '%');
+        }
+        else
+        {
+            jucator[i].valoarea_mainii = 1;
+            jucator[i].sansa = 100 * jucator[i].valoarea_mainii / (n-1);
+            //jucator[i].sansa = jucator[i].sansa / (n-1);
+            printf("\n\nJucatorul %d are %.2f%c sansa de castig cu high card!", i + 1, jucator[i].sansa, '%');
+        }
     }
+
+    printf("\n\n\n\n\n");
 }
+
+//void determinare_sansa()
+//{
+//    for (int i = 0; i < n; i++)
+//    {
+//        jucator[i].sansa =100* jucator[i].valoarea_mainii /(n-2);
+//        jucator[i].sansa =jucator[i].sansa / 2;
+//        printf("\nJucatorul %d are %.2f%c sansa de castig!",i+1, jucator[i].sansa,'%');
+//    }
+//
+//    //exemplu: nr_maini[]={1 1 4 3 2 2 1 1 1 3}
+//     
+//    /*for (int i = 0; i < n; i++)
+//    {
+//        if (jucator[i].valoarea_mainii > maxim)
+//        {
+//            maxim = jucator[i].valoarea_mainii;
+//            max_i = i;
+//        }
+//    }*/
+//}
 
 void afisare_carti()
 {
@@ -404,7 +478,7 @@ void afisare_carti()
             printf("%s   ", dead_cards[i].culoare);
         }
     }
-    printf("\n\n\n\n\n\n\n\n");
+    printf("\n\n\n");
 }
 
 void afisare_ordonata()

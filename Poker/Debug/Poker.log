@@ -1,3 +1,10 @@
 ﻿  Source.c
-C:\Users\Vlad\source\repos\Poker\Source.c(58,23): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(61,23): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(370,74): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(377,74): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(384,74): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(391,72): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(398,73): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(405,73): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Vlad\source\repos\Poker\Source.c(412,72): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   Poker.vcxproj -> C:\Users\Vlad\source\repos\Poker\Debug\Poker.exe
